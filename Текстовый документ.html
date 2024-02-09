@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropdown from CSV</title>
+</head>
+</head>
+<style>
+    /* Стили  */
+    body {
+        font-family: Arial, sans-serif;
+    }
+    label {
+        display: block;
+        margin-top: 10px;
+    }
+    input[type="text"],
+    input[type="number"] {
+        width: 200px;
+        padding: 5px;
+    }
+    select {
+        width: 200px;
+        padding: 5px;
+    }
+    button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+</style>
+<body>
+<h1>Форма для заполнения данных</h1>
+<form id="dataForm">
+    <h2>Табличная часть</h2>
+    <div id="employees">
+        <div class="employee">
+            <label>Фамилия: <input type="text" name="surname[]"></label>
+            <label>Имя: <input type="text" name="name[]"></label>
+            <label>Отчество: <input type="text" name="patronymic[]"></label>
+            <label>Дата рождения: <input type="number" name="birthdate[]"></label>
+            <label>Пол:
+                <select name="gender[]">
+                    <option value="Мужской">Мужской</option>
+                    <option value="Женский">Женский</option>
+                </select>
+            </label>
+            <label>СНИЛС: <input type="text" name="snils[]"></label>
+            <label>Должность: <input type="text" name="position[]"></label>
+            <label>Подразделение: <input type="text" name="department[]"></label>
+            <label>Стаж в месяцах: <input type="number" name="experience[]"></label>
+            <label>Наименование вредных и (или) опасных производственных факторов:
+                <select id="dropdownList"></select>
+                <script>
+                $(document).ready(function() {
+            $.ajax({
+                url: 'C:\\Users\\azat\\Desktop\\задание\\1.csv',
+                dataType: 'text',
+                success: function(data) {
+                    var dropdownList = $('#dropdownList');
+                    var dataArray = $.csv.toArrays(data, {separator: ','});
+                    var headers = dataArray[0];
+                    for (var i = 1; i < dataArray.length; i++) {
+                        var item = dataArray[i];
+                        dropdownList.append($('<option>', {
+                            value: item[0], 
+                            text: item[0]  
+                        }));
+                    }
+                    $('#dropdownList').DataTable();
+                }
+            });
+        });
+                </script>
+               
+            </label>
+            <label>Наименование работ и профессий: <input type="text" name="jobs[]"></label>
+            <label>Адрес проживания: <input type="text" name="address[]"></label>
+        </div>
+    </div>
+
+    <h2>Дополнительная информация</h2>
+    <label>Наименование организации: <input type="text" name="organization"></label>
+    <label>ОКВЭД: <input type="text" name="okved"></label>
+    <label>ФИО ответственного лица: <input type="text" name="responsibleName"></label>
+    <label>Должность ответственного лица: <input type="text" name="responsiblePosition"></label>
+    <label>Электронная почта: <input type="text" name="email"></label>
+    <label>Контактный телефон: <input type="text" name="phone"></label>
+
+    <button type="button" onclick="generateExcel()">Сформировать поименный список</button>
+    <button type="button" onclick="generateDoc()">Сформировать направления</button>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        loadDropdown();
+    });
+    function generateExcel() {
+        var form = document.getElementById('dataForm');
+        var formData = new FormData(form);
+        var data = {};
+
+    
+        for (var pair of formData.entries()) {
+            var key = pair[0];
+            var value = pair[1];
+
+  
+            if (data.hasOwnProperty(key)) {
+                data[key].push(value);
+            } else {
+                data[key] = [value];
+            }
+        }
+        alert('Файл Excel сформирован.');
+    }
+    function generateDoc() {
+        var form = document.getElementById('dataForm');
+        var formData = new FormData(form);
+        var data = {};
+        for (var pair of formData.entries()) {
+            var key = pair[0];
+            var value = pair[1];
+            if (data.hasOwnProperty(key)) {
+                data[key].push(value);
+            } else {
+                data[key] = [value];
+            }
+        }
+        alert('Файл Word сформирован.');
+    }
+</script>
+</body>
+</html>
